@@ -2,8 +2,8 @@
 # import random
 # import shutil
 #
-# source_drowsy = "dataset/Drowsy"
-# source_non_drowsy = "dataset/Non_Drowsy"
+# source_drowsy = "Drowsy_datset/Drowsy"
+# source_non_drowsy = "Drowsy_datset/Non_Drowsy"
 #
 # target_drowsy = "dataset_n/Drowsy"
 # target_non_drowsy = "dataset_n/Non_Drowsy"
@@ -32,7 +32,7 @@
 #         os.path.join(target_non_drowsy, image)
 #     )
 #
-# print("Mali dataset napravljen!")
+# print("Mali Drowsy_datset napravljen!")
 
 # import os
 # import shutil
