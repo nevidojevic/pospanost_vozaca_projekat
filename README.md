@@ -100,32 +100,52 @@ seed = 42
 
 # Arhitektura modela
 
-Korišćen je model:
+Korišćeni modeli:
+1. Custom CNN
+class CNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(3, 8, 5)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(8, 16, 5)
+        self.adaptive_pool = nn.AdaptiveAvgPool2d((6, 6))
+        self.fc3 = nn.Linear(16 * 6 * 6, 2)
 
-```python
-models.resnet18(
-    weights=models.ResNet18_Weights.DEFAULT
-)
-```
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = self.adaptive_pool(x)
+        x = torch.flatten(x, 1)
+        return self.fc3(x)
+2. ResNet18 (Transfer Learning)
+class ResNetModel(nn.Module):
 
-Poslednji klasifikacioni sloj zamenjen je novim slojem sa dva izlaza:
+    def __init__(self):
+        super().__init__()
 
-```python
-nn.Linear(
-    in_features=512,
-    out_features=2
-)
-```
+        self.model = models.resnet18(
+            weights=models.ResNet18_Weights.DEFAULT
+        )
 
-što omogućava binarnu klasifikaciju između klasa DROWSY i NATURAL.
+        self.model.fc = nn.Linear(
+            self.model.fc.in_features,
+            2
+        )
 
-## Prednosti ResNet18 arhitekture
+    def forward(self, x):
+        return self.model(x)
 
-* Residual Connections
-* Stabilno treniranje dubokih mreža
-* Smanjen problem nestajanja gradijenta
-* Visoke performanse u klasifikaciji slika
-* Pogodna za transfer learning
+# Prednosti modela
+## CNN
+Manji model
+Brže treniranje
+Manje memorije
+Pogodan za baseline poređenje
+## ResNet18
+Residual connections
+Bolja generalizacija
+Stabilnije učenje
+Transfer learning iz ImageNet-a
 
 ---
 
