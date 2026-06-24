@@ -129,7 +129,7 @@ nn.Linear(
 
 ---
 
-# 🏋️ Trening modela
+# Trening modela
 
 ## Funkcija greške
 
