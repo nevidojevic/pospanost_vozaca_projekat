@@ -1,9 +1,10 @@
 import torch
 import torch.optim as optim
 import pandas as pd
-
+import matplotlib.pyplot as plt
 from dataset import get_dataloaders
 from model import ResNetModel
+from model import CNN
 from train import train_one_epoch, validate
 from evaluate import evaluate_metrics
 
@@ -35,19 +36,16 @@ for lr in learning_rates:
         batch_size=16
     )
 
-    model = ResNetModel().to(device)
+    model = CNN().to(device)
 
-    optimizer = optim.Adam(
+    optimizer = optim.SGD(
         model.parameters(),
-        lr=lr
+        lr=lr,
+        momentum=0.9
     )
-
     best_val_acc = 0
     patience_counter = 0
 
-    # =========================
-    # TRAINING LOOP
-    # =========================
     for epoch in range(EPOCHS):
 
         train_loss, train_acc = train_one_epoch(
@@ -69,7 +67,6 @@ for lr in learning_rates:
             f"Val Acc={val_acc:.4f}"
         )
 
-        # Save best model
         if val_acc > best_val_acc:
 
             best_val_acc = val_acc
@@ -77,7 +74,7 @@ for lr in learning_rates:
 
             torch.save(
                 model.state_dict(),
-                "temp_model.pth"
+                "temp_model_cnn.pth"
             )
 
         else:
@@ -87,16 +84,12 @@ for lr in learning_rates:
             print("Early stopping triggered")
             break
 
-    # =========================
     # LOAD BEST MODEL
-    # =========================
     model.load_state_dict(
-        torch.load("temp_model.pth")
+        torch.load("temp_model_cnn.pth")
     )
 
-    # =========================
-    # EVALUATION
-    # =========================
+
     metrics = evaluate_metrics(
         model,
         test_loader,
@@ -104,9 +97,7 @@ for lr in learning_rates:
         classes
     )
 
-    # =========================
-    # SAVE RESULTS
-    # =========================
+
     results.append([
         lr,
         metrics["accuracy"],
@@ -122,9 +113,7 @@ for lr in learning_rates:
     print(f"Macro F1       = {metrics['macro_f1']:.4f}")
 
 
-# =========================
-# SAVE CSV
-# =========================
+
 df = pd.DataFrame(
     results,
     columns=[
@@ -137,8 +126,59 @@ df = pd.DataFrame(
 )
 
 df.to_csv(
-    "learning_rate_results.csv",
+    "learning_rate_results_cnn.csv",
     index=False
 )
 
-print("\nSaved to learning_rate_results.csv")
+print("\nSaved to learning_rate_results_cnn.csv")
+
+df = pd.DataFrame(
+    results,
+    columns=[
+        "LearningRate",
+        "Accuracy",
+        "Recall_Drowsy",
+        "Recall_Natural",
+        "F1"
+    ]
+)
+
+# ---- Accuracy plot ----
+plt.figure()
+plt.plot(df["LearningRate"], df["Accuracy"], marker="o")
+plt.xscale("log")
+plt.title("Learning Rate vs Accuracy")
+plt.xlabel("Learning Rate (log scale)")
+plt.ylabel("Accuracy")
+plt.grid()
+plt.show()
+
+# ---- Recall (DROWSY) ----
+plt.figure()
+plt.plot(df["LearningRate"], df["Recall_Drowsy"], marker="o")
+plt.xscale("log")
+plt.title("Learning Rate vs Recall (DROWSY)")
+plt.xlabel("Learning Rate (log scale)")
+plt.ylabel("Recall DROWSY")
+plt.grid()
+plt.show()
+
+# ---- Recall (NATURAL) ----
+plt.figure()
+plt.plot(df["LearningRate"], df["Recall_Natural"], marker="o")
+plt.xscale("log")
+plt.title("Learning Rate vs Recall (NATURAL)")
+plt.xlabel("Learning Rate (log scale)")
+plt.ylabel("Recall NATURAL")
+plt.grid()
+plt.show()
+
+# ---- Macro F1 ----
+plt.figure()
+plt.plot(df["LearningRate"], df["F1"], marker="o")
+plt.xscale("log")
+plt.title("Learning Rate vs Macro F1")
+plt.xlabel("Learning Rate (log scale)")
+plt.ylabel("Macro F1")
+plt.grid()
+plt.show()

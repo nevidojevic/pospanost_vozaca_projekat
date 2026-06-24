@@ -6,12 +6,14 @@ from sklearn.metrics import (
     accuracy_score,
     classification_report,
     confusion_matrix,
-    ConfusionMatrixDisplay
+    ConfusionMatrixDisplay,
+    roc_curve,
+    auc
 )
 
 
 # =========================
-# FULL EVALUATION (REPORT + CM + WRONG PREDICTIONS)
+# FULL EVALUATION
 # =========================
 def evaluate(model, loader, device, classes, test_dataset):
 
@@ -19,6 +21,7 @@ def evaluate(model, loader, device, classes, test_dataset):
 
     all_preds = []
     all_labels = []
+    all_probs = []
 
     wrong_predictions = []
 
@@ -30,7 +33,10 @@ def evaluate(model, loader, device, classes, test_dataset):
         for x, y in loader:
 
             x = x.to(device)
+
             outputs = model(x)
+
+            probs = torch.softmax(outputs, dim=1)
 
             preds = torch.argmax(outputs, 1)
 
@@ -39,6 +45,11 @@ def evaluate(model, loader, device, classes, test_dataset):
 
             all_preds.extend(preds_np)
             all_labels.extend(labels_np)
+
+            # verovatnoća za DROWSY klasu
+            all_probs.extend(
+                probs[:, 0].cpu().numpy()
+            )
 
             for pred, label in zip(preds_np, labels_np):
 
@@ -68,7 +79,10 @@ def evaluate(model, loader, device, classes, test_dataset):
     # =========================
     # CONFUSION MATRIX
     # =========================
-    cm = confusion_matrix(all_labels, all_preds)
+    cm = confusion_matrix(
+        all_labels,
+        all_preds
+    )
 
     ConfusionMatrixDisplay(
         cm,
@@ -79,26 +93,70 @@ def evaluate(model, loader, device, classes, test_dataset):
     plt.show()
 
     # =========================
-    # SAVE WRONG PREDICTIONS
+    # ROC CURVE
+    # =========================
+    fpr, tpr, thresholds = roc_curve(
+        all_labels,
+        all_probs,
+        pos_label=0
+    )
+
+    roc_auc = auc(fpr, tpr)
+
+    print(f"\nROC-AUC: {roc_auc:.4f}")
+
+    plt.figure(figsize=(6, 6))
+
+    plt.plot(
+        fpr,
+        tpr,
+        label=f"AUC = {roc_auc:.4f}"
+    )
+
+    plt.plot(
+        [0, 1],
+        [0, 1],
+        "--"
+    )
+
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("ROC Curve")
+
+    plt.legend()
+    plt.grid()
+
+    plt.savefig("results/roc_curve.png")
+    plt.show()
+
+    # =========================
+    # WRONG PREDICTIONS
     # =========================
     pd.DataFrame(
         wrong_predictions,
-        columns=["image", "true_label", "predicted_label"]
+        columns=[
+            "image",
+            "true_label",
+            "predicted_label"
+        ]
     ).to_csv(
-        "wrong_predictions.csv",
+        "results/wrong_predictions.csv",
         index=False
     )
 
 
-# =========================
-# METRICS (FOR HYPERPARAMETER SEARCH)
-# =========================
-def evaluate_metrics(model, loader, device, classes=None):
+
+def evaluate_metrics(
+        model,
+        loader,
+        device,
+        classes):
 
     model.eval()
 
     all_preds = []
     all_labels = []
+    all_probs = []
 
     with torch.no_grad():
 
@@ -108,18 +166,38 @@ def evaluate_metrics(model, loader, device, classes=None):
 
             outputs = model(x)
 
-            preds = torch.argmax(outputs, 1)
+            probs = torch.softmax(
+                outputs,
+                dim=1
+            )
 
-            all_preds.extend(preds.cpu().numpy())
-            all_labels.extend(y.numpy())
+            preds = torch.argmax(
+                outputs,
+                1
+            )
+
+            all_preds.extend(
+                preds.cpu().numpy()
+            )
+
+            all_labels.extend(
+                y.numpy()
+            )
+
+            all_probs.extend(
+                probs[:, 0].cpu().numpy()
+            )
 
     # =========================
     # ACCURACY
     # =========================
-    accuracy = accuracy_score(all_labels, all_preds)
+    accuracy = accuracy_score(
+        all_labels,
+        all_preds
+    )
 
     # =========================
-    # CLASS-WISE METRICS
+    # REPORT
     # =========================
     report = classification_report(
         all_labels,
@@ -134,11 +212,22 @@ def evaluate_metrics(model, loader, device, classes=None):
     f1_drowsy = report["DROWSY"]["f1-score"]
     f1_natural = report["NATURAL"]["f1-score"]
 
-    # =========================
-    # MACRO METRICS (IMPORTANT FOR REPORT)
-    # =========================
     macro_f1 = report["macro avg"]["f1-score"]
     macro_recall = report["macro avg"]["recall"]
+
+    # =========================
+    # ROC-AUC
+    # =========================
+    fpr, tpr, thresholds = roc_curve(
+        all_labels,
+        all_probs,
+        pos_label=0
+    )
+
+    roc_auc = auc(
+        fpr,
+        tpr
+    )
 
     return {
         "accuracy": accuracy,
@@ -147,5 +236,6 @@ def evaluate_metrics(model, loader, device, classes=None):
         "f1_drowsy": f1_drowsy,
         "f1_natural": f1_natural,
         "macro_f1": macro_f1,
-        "macro_recall": macro_recall
+        "macro_recall": macro_recall,
+        "roc_auc": roc_auc
     }

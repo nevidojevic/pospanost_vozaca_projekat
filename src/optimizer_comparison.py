@@ -4,6 +4,7 @@ import pandas as pd
 
 from dataset import get_dataloaders
 from model import ResNetModel
+from model import CNN
 from train import train_one_epoch, validate
 from evaluate import evaluate_metrics
 
@@ -41,7 +42,7 @@ for optimizer_name, optimizer_fn in optimizers_to_test:
 
     train_loader, val_loader, test_loader, classes, test_dataset = get_dataloaders(BATCH_SIZE)
 
-    model = ResNetModel().to(device)
+    model = CNN().to(device)
 
     optimizer = optimizer_fn(model.parameters())
 
@@ -145,9 +146,9 @@ df = pd.DataFrame(
 )
 
 df.to_csv(
-    "optimizer_comparison.csv",
+    "optimizer_comparison_cnn.csv",
     index=False
 )
 
-print("\nResults saved to optimizer_comparison.csv")
+print("\nResults saved to optimizer_comparison_cnn.csv")
 print(df)

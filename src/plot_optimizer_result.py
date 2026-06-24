@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-df = pd.read_csv("optimizer_comparison.csv")
+df = pd.read_csv("results/optimizer_comparison.csv")
 
 x = np.arange(len(df))
 width = 0.25
