@@ -87,8 +87,8 @@ Augmentacija nije primenjivana nad test podacima.
 
 Trening skup je dodatno podeljen na:
 
-* 80% trening
-* 20% validacija
+* 80% trening i validacija
+* 20% test
 
 Radi reproduktivnosti rezultata korišćen je:
 
@@ -140,20 +140,42 @@ class ResNetModel(nn.Module):
     def forward(self, x):
         return self.model(x)
 ```
-# Prednosti modela
-## CNN
-Manji model
-Brže treniranje
-Manje memorije
-Pogodan za baseline poređenje
-## ResNet18
-Residual connections
-Bolja generalizacija
-Stabilnije učenje
-Transfer learning iz ImageNet-a
+## Zašto su korišćeni i CNN i ResNet18?
+
+U okviru ovog projekta korišćena su dva različita pristupa dubokom učenju: **custom CNN model** i **ResNet18 arhitektura sa transfer learning-om**.
+
+### CNN (Custom model)
+
+CNN model je implementiran kao **baseline rešenje** kako bi se:
+
+- testirala osnovna sposobnost modela da prepozna obrasce na slikama
+- dobila referentna tačnost bez korišćenja unapred treniranih mreža
+- analizirala efikasnost jednostavne arhitekture u odnosu na kompleksnije modele
+
+Ovaj model ima manji broj parametara, brže se trenira i koristi se kao početna tačka u poređenju performansi.
 
 ---
-Primarni model koji se koristi i posmatra za ovaj zadatak je ResNet.
+
+### ResNet18 (Transfer Learning)
+
+ResNet18 je korišćen kao napredniji model zasnovan na **transfer learning-u**, gde se koristi mreža prethodno trenirana na ImageNet datasetu.
+
+Razlog za njegovu upotrebu:
+
+- bolja sposobnost ekstrakcije kompleksnih karakteristika
+- stabilnije treniranje zahvaljujući residual connections
+- bolje generalizacione performanse na manjim dataset-ima
+- brže postizanje visokih rezultata u odnosu na training from scratch
+
+---
+
+- direktno poređenje jednostavnog i naprednog pristupa
+- analizu uticaja arhitekture na performanse
+- validaciju da transfer learning daje bolje rezultate u realnim uslovima
+- 
+
+---
+*Primarni model koji se koristi i posmatra za ovaj zadatak je ResNet.*
 
 
 # Trening modela
