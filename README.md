@@ -101,8 +101,8 @@ seed = 42
 # Arhitektura modela
 
 Korišćeni modeli:
-CNN (baseline)
-CNN (baseline)
+1. CNN (baseline)
+
 
 ```python
 class CNN(nn.Module):
@@ -153,6 +153,8 @@ Stabilnije učenje
 Transfer learning iz ImageNet-a
 
 ---
+Primarni model koji se koristi i posmatra za ovaj zadatak je ResNet.
+
 
 # Trening modela
 
