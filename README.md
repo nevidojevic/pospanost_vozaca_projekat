@@ -1,6 +1,6 @@
 
 
-# Detekcija pospanosti vozača korišćenjem ResNet18 modela
+# Detekcija pospanosti vozača 
 
 ## Opis projekta
 
