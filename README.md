@@ -299,4 +299,8 @@ U okviru projekta razvijen je sistem za detekciju pospanosti vozača zasnovan na
 
 Primena transfer learning pristupa omogućila je postizanje visokih performansi uz relativno kratko vreme treniranja. Najbolji model ostvario je tačnost veću od **97%**, dok je tokom hiperparametarske optimizacije postignuta tačnost od preko **99%**.
 
-Rezultati pokazuju da duboke neuronske mreže predstavljaju efikasno rešenje za automatsku detekciju pospanosti vozača i mogu poslužiti kao osnova za razvoj naprednih sistema za povećanje bezbednosti u saobraćaju.
+Rezultati pokazuju da duboke neuronske mreže predstavljaju efikasno rešenje za automatsku detekciju pospanosti vozača i mogu poslužiti kao osnova za razvoj naprednih sistema za povećanje bezbednosti u saobraćaju
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
