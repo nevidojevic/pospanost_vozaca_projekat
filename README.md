@@ -101,7 +101,10 @@ seed = 42
 # Arhitektura modela
 
 Korišćeni modeli:
-1. Custom CNN
+CNN (baseline)
+CNN (baseline)
+
+```python
 class CNN(nn.Module):
     def __init__(self):
         super().__init__()
@@ -117,7 +120,9 @@ class CNN(nn.Module):
         x = self.adaptive_pool(x)
         x = torch.flatten(x, 1)
         return self.fc3(x)
+```
 2. ResNet18 (Transfer Learning)
+```python   
 class ResNetModel(nn.Module):
 
     def __init__(self):
@@ -134,7 +139,7 @@ class ResNetModel(nn.Module):
 
     def forward(self, x):
         return self.model(x)
-
+```
 # Prednosti modela
 ## CNN
 Manji model
@@ -185,10 +190,13 @@ patience = 4
 
 Trening se prekida ukoliko validaciona tačnost ne pokazuje poboljšanje tokom četiri uzastopne epohe.
 
-Najbolji model čuva se u datoteci:
+Najbolji modeli čuvaju se u datotekama:
 
 ```text
 resnet_model.pth
+```
+```text
+cnn_model.pth
 ```
 
 ---
@@ -197,7 +205,7 @@ resnet_model.pth
 
 ## 1. Learning Rate analiza
 
-Testirane vrednosti:
+Testirane vrednosti za ResNet:
 
 | Learning Rate | Accuracy |
 | ------------- | -------- |
@@ -211,6 +219,13 @@ Najbolji rezultat ostvaren je za:
 LR = 0.0005
 ```
 
+Testirane vrednosti za CNN:
+
+| Learning Rate | Accuracy | 
+|--------------|----------|
+| 0.001        | 97.13%   | 
+| 0.0005       | 96.07%   | 
+| 0.0001       | 91.87%   | 
 ---
 
 ## 2. Poređenje optimizatora
@@ -223,13 +238,19 @@ Testirani optimizatori:
 | SGD + Momentum | 0.001         |
 
 ### Rezultati
+ResNet
 
 | Optimizator | Accuracy |
 | ----------- | -------- |
 | Adam        | 98.6%    |
 | SGD         | 97.4%    |
 
-Adam optimizator pokazao je bolju konvergenciju i više performanse.
+CNN
+
+| Optimizer | Accuracy | 
+|----------|----------|
+| Adam     | 93.53%   | 
+| SGD      | 97.13%   | 
 
 ---
 
@@ -263,7 +284,7 @@ Na osnovu matrice moguće je identifikovati tipove grešaka koje model najčeš�
 
 # Rezultati evaluacije
 
-Rezultati na test skupu:
+Rezultati na test skupu za ResNet:
 
 | Metrika             | Vrednost |
 | ------------------- | -------- |
