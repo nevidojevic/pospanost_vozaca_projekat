@@ -12,9 +12,8 @@ from sklearn.metrics import (
 )
 
 
-# =========================
-# FULL EVALUATION
-# =========================
+
+
 def evaluate(model, loader, device, classes, test_dataset):
 
     model.eval()
@@ -63,9 +62,6 @@ def evaluate(model, loader, device, classes, test_dataset):
 
                 image_index += 1
 
-    # =========================
-    # CLASSIFICATION REPORT
-    # =========================
     print("\nCLASSIFICATION REPORT:\n")
 
     report = classification_report(
@@ -76,9 +72,9 @@ def evaluate(model, loader, device, classes, test_dataset):
 
     print(report)
 
-    # =========================
-    # CONFUSION MATRIX
-    # =========================
+
+
+
     cm = confusion_matrix(
         all_labels,
         all_preds

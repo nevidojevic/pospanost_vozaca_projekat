@@ -22,69 +22,63 @@ test_loader,\
 classes,\
 test_dataset = get_dataloaders(BATCH_SIZE)
 print(classes)
-#model = ResNetModel().to(device)
-model = CNN().to(device)
+model = ResNetModel().to(device)
 
-# optimizer = optim.Adam(
-#     model.parameters(),
-#     lr=LR
-# )
-#
-# best_val_acc = 0
-# patience_counter = 0
-#
-# for epoch in range(EPOCHS):
-#
-#     train_loss, train_acc = train_one_epoch(
-#         model,
-#         train_loader,
-#         optimizer,
-#         device
-#     )
-#
-#     val_loss, val_acc = validate(
-#         model,
-#         val_loader,
-#         device
-#     )
-#
-#     print(
-#         f"Epoch {epoch+1} | "
-#         f"Train Loss: {train_loss:.4f} | "
-#         f"Train Acc: {train_acc:.4f} | "
-#         f"Val Loss: {val_loss:.4f} | "
-#         f"Val Acc: {val_acc:.4f}"
-#     )
-#
-#     # EARLY STOPPING
-#
-#     if val_acc >= best_val_acc:
-#
-#         best_val_acc = val_acc
-#         patience_counter = 0
-#
-#         # torch.save(
-#         #     model.state_dict(),
-#         #     "resnet_model.pth"
-#         # )
-#         torch.save(
-#             model.state_dict(),
-#             "cnn_model.pth"
-#         )
-#
-#     else:
-#
-#         patience_counter += 1
-#
-#     if patience_counter >= PATIENCE:
-#
-#         print(
-#             "\nEarly stopping activated!"
-#         )
-#
-#         break
+optimizer = optim.Adam(
+    model.parameters(),
+    lr=LR
+)
 
-# učitavanje najboljeg modela
+best_val_acc = 0
+patience_counter = 0
+
+for epoch in range(EPOCHS):
+
+    train_loss, train_acc = train_one_epoch(
+        model,
+        train_loader,
+        optimizer,
+        device
+    )
+
+    val_loss, val_acc = validate(
+        model,
+        val_loader,
+        device
+    )
+
+    print(
+        f"Epoch {epoch+1} | "
+        f"Train Loss: {train_loss:.4f} | "
+        f"Train Acc: {train_acc:.4f} | "
+        f"Val Loss: {val_loss:.4f} | "
+        f"Val Acc: {val_acc:.4f}"
+    )
+
+    # EARLY STOPPING
+
+    if val_acc >= best_val_acc:
+
+        best_val_acc = val_acc
+        patience_counter = 0
+
+        torch.save(
+            model.state_dict(),
+            "resnet_model.pth"
+        )
+
+    else:
+
+        patience_counter += 1
+
+    if patience_counter >= PATIENCE:
+
+        print(
+            "\nEarly stopping activated!"
+        )
+
+        break
+
 
 model.load_state_dict(
     torch.load("cnn_model.pth")

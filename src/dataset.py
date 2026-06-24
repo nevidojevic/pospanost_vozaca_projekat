@@ -15,9 +15,9 @@ def get_dataloaders(batch_size=16, seed=42):
 
     generator = torch.Generator().manual_seed(seed)
 
-    # =========================
+
     # IMAGE TRANSFORMS
-    # =========================
+
 
     train_transform = transforms.Compose([
         transforms.Resize((96, 96)),
@@ -50,9 +50,8 @@ def get_dataloaders(batch_size=16, seed=42):
         )
     ])
 
-    # =========================
+
     # DATASET
-    # =========================
     full_dataset = datasets.ImageFolder(
         "../Drowsy_datset/train",
         transform=train_transform
@@ -63,9 +62,8 @@ def get_dataloaders(batch_size=16, seed=42):
         transform=test_transform
     )
 
-    # =========================
     # TRAIN / VAL SPLIT
-    # =========================
+
     train_size = int(0.8 * len(full_dataset))
     val_size = len(full_dataset) - train_size
 
@@ -75,9 +73,9 @@ def get_dataloaders(batch_size=16, seed=42):
         generator=generator
     )
 
-    # =========================
+
     # DATALOADERS
-    # =========================
+
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,

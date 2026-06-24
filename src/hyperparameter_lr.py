@@ -84,7 +84,6 @@ for lr in learning_rates:
             print("Early stopping triggered")
             break
 
-    # LOAD BEST MODEL
     model.load_state_dict(
         torch.load("temp_model_cnn.pth")
     )

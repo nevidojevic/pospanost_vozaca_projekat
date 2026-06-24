@@ -42,16 +42,13 @@ for optimizer_name, optimizer_fn in optimizers_to_test:
 
     train_loader, val_loader, test_loader, classes, test_dataset = get_dataloaders(BATCH_SIZE)
 
-    model = CNN().to(device)
+    model = ResNetModel().to(device)
 
     optimizer = optimizer_fn(model.parameters())
 
     best_val_acc = 0
     patience_counter = 0
 
-    # =========================
-    # TRAINING LOOP
-    # =========================
     for epoch in range(EPOCHS):
 
         train_loss, train_acc = train_one_epoch(
@@ -90,16 +87,12 @@ for optimizer_name, optimizer_fn in optimizers_to_test:
             print(f"Early stopping for {optimizer_name}")
             break
 
-    # =========================
-    # LOAD BEST MODEL
-    # =========================
+
     model.load_state_dict(
         torch.load("temp_optimizer_model.pth")
     )
 
-    # =========================
-    # EVALUATION (NEW METRICS)
-    # =========================
+
     metrics = evaluate_metrics(
         model,
         test_loader,
@@ -107,9 +100,8 @@ for optimizer_name, optimizer_fn in optimizers_to_test:
         classes
     )
 
-    # =========================
-    # SAVE RESULTS
-    # =========================
+
+
     results.append([
         optimizer_name,
         metrics["accuracy"],
@@ -129,9 +121,8 @@ for optimizer_name, optimizer_fn in optimizers_to_test:
     print(f"Macro F1       = {metrics['macro_f1']:.4f}")
 
 
-# =========================
-# SAVE CSV
-# =========================
+
+
 df = pd.DataFrame(
     results,
     columns=[
@@ -146,9 +137,9 @@ df = pd.DataFrame(
 )
 
 df.to_csv(
-    "optimizer_comparison_cnn.csv",
+    "optimizer_comparison_resnet.csv",
     index=False
 )
 
-print("\nResults saved to optimizer_comparison_cnn.csv")
+print("\nResults saved to optimizer_comparison_resnet.csv")
 print(df)
