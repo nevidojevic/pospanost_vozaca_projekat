@@ -81,7 +81,7 @@ for epoch in range(EPOCHS):
 
 
 model.load_state_dict(
-    torch.load("cnn_model.pth")
+    torch.load("resnet_model.pth")
 )
 
 evaluate(
