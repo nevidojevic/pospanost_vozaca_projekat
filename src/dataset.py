@@ -27,7 +27,6 @@ def get_dataloaders(batch_size=16, seed=42):
         transforms.ColorJitter(
             brightness=0.2,
             contrast=0.2,
-            saturation=0.2
         ),
         transforms.RandomAffine(
             degrees=0,
