@@ -87,8 +87,8 @@ Augmentacija nije primenjivana nad test podacima.
 
 Trening skup je dodatno podeljen na:
 
-* 80% trening i validacija
-* 20% test
+* 80% trening 
+* 20% validacija
 
 Radi reproduktivnosti rezultata korišćen je:
 
