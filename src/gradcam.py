@@ -5,7 +5,12 @@ from PIL import Image
 from torchvision import transforms
 from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
+from model import ResNetModel
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+model = ResNetModel().to(device)
+model.load_state_dict(torch.load("resnet_model.pth", map_location=device))
+model.eval()
 
 def run_gradcam(model, image_path, device):
 
@@ -56,3 +61,8 @@ def run_gradcam(model, image_path, device):
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    image_path = r"..\Drowsy_datset\train\NATURAL\Screenshot 2026-06-21 122515.png"
+
+    run_gradcam(model, image_path, device)

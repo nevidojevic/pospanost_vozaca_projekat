@@ -22,12 +22,18 @@ test_loader,\
 classes,\
 test_dataset = get_dataloaders(BATCH_SIZE)
 print(classes)
-model = ResNetModel().to(device)
+model = CNN().to(device)
 
 optimizer = optim.Adam(
     model.parameters(),
     lr=LR
 )
+
+# optimizer = optim.SGD(
+#     model.parameters(),
+#     lr=0.001,
+#     momentum=0.9
+# )
 
 best_val_acc = 0
 patience_counter = 0
@@ -55,7 +61,7 @@ for epoch in range(EPOCHS):
         f"Val Acc: {val_acc:.4f}"
     )
 
-    # EARLY STOPPING
+
 
     if val_acc >= best_val_acc:
 

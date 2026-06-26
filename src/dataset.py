@@ -1,10 +1,8 @@
-
-
 import torch
 import random
 import numpy as np
 from torchvision import datasets, transforms
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader, random_split, Subset
 
 
 def get_dataloaders(batch_size=16, seed=42):
@@ -14,9 +12,6 @@ def get_dataloaders(batch_size=16, seed=42):
     np.random.seed(seed)
 
     generator = torch.Generator().manual_seed(seed)
-
-
-    # IMAGE TRANSFORMS
 
 
     train_transform = transforms.Compose([
@@ -33,10 +28,10 @@ def get_dataloaders(batch_size=16, seed=42):
             translate=(0.05, 0.05)
         ),
         transforms.ToTensor(),
-        transforms.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
+      transforms.Normalize(
+          mean=[0.485, 0.456, 0.406],
+          std=[0.229, 0.224, 0.225]
+      )
     ])
 
     test_transform = transforms.Compose([
@@ -49,11 +44,14 @@ def get_dataloaders(batch_size=16, seed=42):
         )
     ])
 
-
-    # DATASET
-    full_dataset = datasets.ImageFolder(
+    train_dataset_full = datasets.ImageFolder(
         "../Drowsy_datset/train",
         transform=train_transform
+    )
+
+    val_dataset_full = datasets.ImageFolder(
+        "../Drowsy_datset/train",
+        transform=test_transform
     )
 
     test_dataset = datasets.ImageFolder(
@@ -61,19 +59,22 @@ def get_dataloaders(batch_size=16, seed=42):
         transform=test_transform
     )
 
-    # TRAIN / VAL SPLIT
+    train_size = int(0.8 * len(train_dataset_full))
+    val_size = len(train_dataset_full) - train_size
 
-    train_size = int(0.8 * len(full_dataset))
-    val_size = len(full_dataset) - train_size
-
-    train_dataset, val_dataset = random_split(
-        full_dataset,
+    train_subset, val_subset = random_split(
+        train_dataset_full,
         [train_size, val_size],
         generator=generator
     )
 
+    train_indices = train_subset.indices
+    val_indices = val_subset.indices
 
-    # DATALOADERS
+    train_dataset = Subset(train_dataset_full, train_indices)
+    val_dataset = Subset(val_dataset_full, val_indices)
+
+
 
     train_loader = DataLoader(
         train_dataset,
@@ -97,6 +98,6 @@ def get_dataloaders(batch_size=16, seed=42):
         train_loader,
         val_loader,
         test_loader,
-        full_dataset.classes,
+        train_dataset_full.classes,
         test_dataset
     )

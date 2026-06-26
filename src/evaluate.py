@@ -205,6 +205,9 @@ def evaluate_metrics(
     recall_drowsy = report["DROWSY"]["recall"]
     recall_natural = report["NATURAL"]["recall"]
 
+    precision_drowsy = report["DROWSY"]["precision"]
+    precision_natural = report["NATURAL"]["precision"]
+
     f1_drowsy = report["DROWSY"]["f1-score"]
     f1_natural = report["NATURAL"]["f1-score"]
 
@@ -229,6 +232,8 @@ def evaluate_metrics(
         "accuracy": accuracy,
         "recall_drowsy": recall_drowsy,
         "recall_natural": recall_natural,
+        "precision_drowsy": precision_drowsy,
+        "precision_natural": precision_natural,
         "f1_drowsy": f1_drowsy,
         "f1_natural": f1_natural,
         "macro_f1": macro_f1,
